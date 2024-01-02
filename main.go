@@ -1,39 +1,20 @@
 package main
 
 import (
-	"fmt"
-	"html/template"
-	"net/http"
-)
+	"log"
 
-var tpl *template.Template
+	"github.com/Galbeyte1/go-web-dev/database"
+	"github.com/Galbeyte1/go-web-dev/routes"
+	"github.com/gofiber/fiber/v2"
+)
 
 func main() {
 
-	// func ParseFiles(filenames ...string) (*Template, error)
-	tpl, _ = template.ParseFiles("index.html")
+	database.Connect()
+	app := fiber.New()
 
-	// registers the handler function for the given pattern in the DefaultServeMux.
-	http.HandleFunc("/hello", helloHandleFunc)
-	http.HandleFunc("/about", aboutHandleFunc)
-	http.HandleFunc("/", indexHandler)
-	// ListenAndServe listens on the TCP network address addr and then calls Serve
-	// with handler to handle requests on incoming connections
-	http.ListenAndServe(":8080", nil) // entering nil implicitly uses DefaultServeMux
-	// Serve mux is an HTTP request multiplexer. It matches the URL of each incoming
-	// request against a list of registered patterns anc calls the handler for the
-	// pattern that most closely matches the URL.
+	routes.Setup(app)
+
+    log.Fatal(app.Listen(":50051"))
 }
 
-func helloHandleFunc(w http.ResponseWriter, r*http.Request) {
-	//fmt.Fprint(w, "Hello, World!")
-	fmt.Fprint(w, "r.URL.Path:, %s!", r.URL.Path)
-}
-
-func aboutHandleFunc(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Welcome to our Gopher powered website.")
-}
-
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	tpl.Execute(w, nil)
-}

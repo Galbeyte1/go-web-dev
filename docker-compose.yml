@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:12.2-alpine
+    container_name: "db"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=goServerDatabase
+      - POSTGRES_USER=galbeyte
+      - POSTGRES_PASSWORD=devenv
+    networks:
+      - fullstack
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+  
+  server:
+    build: .
+    container_name: "go-server"
+    restart: always
+    environment:
+      DB_USERNAME: "galbeyte"
+      DB_PASSWORD: "devenv"
+      DB_DB: "goServerDatabase"
+      DB_HOST: "db"
+      DB_PORT: "5432"
+      DB_SSL_MODE: "disable"
+      GOPATH: "/go-web-dev"
+    ports:
+      - "50051:50051"
+    depends_on:
+      - db
+    networks:
+      - fullstack
+
+volumes:
+  database_postgres:
+
+networks:
+  fullstack:
+    driver: bridge
