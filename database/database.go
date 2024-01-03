@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-
+var DB *gorm.DB
 
 func Connect() {
 	/*
@@ -19,11 +19,15 @@ func Connect() {
 	*/
 
 	dsn := "host=db user=galbeyte password=devenv dbname=goServerDatabase"
+	// dsn := "host=localhost user=galbeyte password=devenv dbname=goserverdatabase"
+
 	connection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		panic("Failed to connect to database.")
 	}
+
+	DB = connection
 
 	connection.AutoMigrate(&models.User{})
 }
